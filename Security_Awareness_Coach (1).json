@@ -1,0 +1,194 @@
+{
+  "name": "Security Awareness Coach",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        -160
+      ],
+      "id": "5eeeee43-0969-4931-9711-4b02cc4d6722",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "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"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"model\": \"claude-3-opus-20240229\",\n  \"max_tokens\": 800,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Here's a cybersecurity news article:\\n\\nTitle: Mozilla releases Firefox 139.0.1 update to fix artifacts on Nvidia GPUs\\n\\nSummary: Mozilla has rolled out an emergency Firefox 139.0.1 update after the Tuesday release caused graphical artifacts on PCs with NVIDIA GPUs.\\n\\nSummarize this in plain English for a non-technical person, and then create one multiple-choice security awareness question with 4 clearly labeled options (a–d).\"\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        360,
+        -160
+      ],
+      "id": "5fb949a2-768c-4205-a659-7358204ca93c",
+      "name": "HTTP Request",
+      "credentials": {
+        "anthropicApi": {
+          "id": "INH6K5iInvCYgxFs",
+          "name": "Anthropic account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const full = $json.content[0].text;\n\nreturn [{\n  json: {\n    summary_and_question: full\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        580,
+        -160
+      ],
+      "id": "b451846c-8e86-4662-b025-a401e8ac2e75",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "subject": "Cybersecurity News",
+        "emailType": "text",
+        "message": "=<p style=\"font-family: sans-serif; line-height: 1.6;\">\n<strong>Plain English Summary:</strong><br>\n{{$json[\"summary_and_question\"]}}\n</p>\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        800,
+        -160
+      ],
+      "id": "faf4e4e8-ca81-47fa-a677-753028fa7393",
+      "name": "Gmail",
+      "webhookId": "299b82ec-8dc4-45e0-a6eb-fb4293f4341b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "oZRBOm89XdXvkiSf",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.bleepingcomputer.com/feed/",
+        "options": {
+          "ignoreSSL": false
+        }
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        -160
+      ],
+      "id": "01796260-8402-4745-9062-76748e8b233e",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Only keep the newest article\nreturn [items[0]];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        140,
+        -160
+      ],
+      "id": "fa02547c-eb28-4044-b0eb-16a0df08c047",
+      "name": "Code1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a8282785-65b4-4a06-ba85-e2623d4d0987",
+  "meta": {
+    "instanceId": "ade23ea3b47b9b0987453b055f059beaea67474914d2c5c10f4fff59ee9baf33"
+  },
+  "id": "w9xjvYVXQ4pwLwDo",
+  "tags": []
+}
