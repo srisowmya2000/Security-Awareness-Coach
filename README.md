@@ -60,7 +60,7 @@ Gmail account (OAuth2 connected in n8n)
 
 1. Import Workflow
 
-Download the security-awareness-coach.json file (included in this repo)
+Download the security-awareness-coach1.json file (included in this repo)
 
 In n8n, click Import Workflow → paste or upload a file
 
@@ -73,3 +73,8 @@ Add Header: x-api-key: your Claude API key
 Add Header: anthropic-version: 2023-06-01
 
 Content-Type: application/json
+
+3. Also, add your email in the email node
+4. Then execute the workflow
+
+
