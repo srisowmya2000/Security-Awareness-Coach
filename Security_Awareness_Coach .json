@@ -23,7 +23,7 @@
           "parameters": [
             {
               "name": "x-api-key",
-              "value": "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"
+              "value": "sk-ant-ap3-hxyhy68G4yWKvYwsbe5wNdWFkW6rccID0DltCFrETUe43OP369qcg3oVvXgO91q1AlBWI2jkcOXR4s5bkaNQ-n2kRHQAA"
             },
             {
               "name": "anthropic-version",
